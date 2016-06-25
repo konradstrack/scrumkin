@@ -1,0 +1,4 @@
+scrumway:
+  build: .
+  volumes:
+    - ".:/go/src/app"
