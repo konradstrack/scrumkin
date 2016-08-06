@@ -1,9 +1,9 @@
 FROM golang:1.6
 
-RUN go get github.com/nlopes/slack
+ENV APP_PATH /go/src/scrumway
+ENV GOBIN $GOPATH/bin
 
-COPY . /go/src/app
-WORKDIR /go/src/app
+COPY . $APP_PATH
+WORKDIR $APP_PATH
 
-RUN go install
-CMD ["app"]
+CMD ["scrumway"]

@@ -1,4 +1,4 @@
-package main
+package bot
 
 import (
 	"fmt"
@@ -8,13 +8,29 @@ import (
 	"github.com/nlopes/slack"
 )
 
-func Connect() *slack.RTM {
-	setupLogger()
+type Bot struct {
+	messages chan *Message
+}
 
+type Message struct {
+	message string
+}
+
+func Run() {
+	setUpLogger()
+
+	bot := new(Bot)
+	bot.Connect()
+}
+
+func (b *Bot) Enqueue(m *Message) {
+	b.messages <- m
+}
+
+func (b *Bot) Connect() *slack.RTM {
 	token := os.Getenv("SLACK_TOKEN")
 	if token == "" {
-		fmt.Println("Token not provided. Please set the SLACK_TOKEN environment variable.")
-		os.Exit(1)
+		log.Fatal("error: Token not provided. Please set the SLACK_TOKEN environment variable.")
 	}
 
 	api := slack.New(token)
@@ -29,14 +45,13 @@ func Connect() *slack.RTM {
 		case *slack.ConnectedEvent:
 			fmt.Println("Connected:")
 		case *slack.MessageEvent:
-			fmt.Printf("Message: %v\n", event)
-		default:
-			fmt.Println("Other event...")
+			m := Message{event.Msg.Text}
+			b.Enqueue(&m)
 		}
 	}
 }
 
-func setupLogger() {
+func setUpLogger() {
 	// added a logger to fix a nil pointer dereference;
 	// see: https://github.com/nlopes/slack/commit/faac376828565b0d1dce05142add386de5fb7363
 	logger := log.New(os.Stdout, "scrumway: ", log.Lshortfile|log.LstdFlags)

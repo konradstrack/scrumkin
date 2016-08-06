@@ -1,9 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"scrumway/pkg/bot"
+)
 
 func main() {
 	fmt.Println("Starting scrumway")
-
-	Connect()
+	bot.Run()
 }
