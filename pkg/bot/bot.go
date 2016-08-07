@@ -3,8 +3,8 @@ package bot
 import (
 	"log"
 	"os"
-	"scrumway/pkg/commands"
-	"scrumway/pkg/messages"
+	"scrumkin/pkg/commands"
+	"scrumkin/pkg/messages"
 
 	"github.com/nlopes/slack"
 )
@@ -67,7 +67,7 @@ func (b *Bot) listen() *slack.RTM {
 func setUpLogger() {
 	// added a logger to fix a nil pointer dereference;
 	// see: https://github.com/nlopes/slack/commit/faac376828565b0d1dce05142add386de5fb7363
-	logger := log.New(os.Stdout, "scrumway: ", log.Lshortfile|log.LstdFlags)
+	logger := log.New(os.Stdout, "scrumkin: ", log.Lshortfile|log.LstdFlags)
 	slack.SetLogger(logger)
 }
 

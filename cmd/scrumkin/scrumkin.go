@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"scrumway/pkg/bot"
+	"scrumkin/pkg/bot"
 )
 
 func main() {
-	fmt.Println("Starting scrumway")
+	fmt.Println("Starting scrumkin")
 
 	token := os.Getenv("SLACK_TOKEN")
 	if token == "" {

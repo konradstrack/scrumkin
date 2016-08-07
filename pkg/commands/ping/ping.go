@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"scrumway/pkg/messages"
+	"scrumkin/pkg/messages"
 )
 
 type Ping struct {

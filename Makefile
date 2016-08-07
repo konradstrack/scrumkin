@@ -1,9 +1,9 @@
 SRC_PATHS := ./cmd ./pkg
 SRC := $(shell find $(SRC_PATHS) -name '*.go')
 
-all: scrumway
+all: scrumkin
 
-scrumway: $(SRC)
+scrumkin: $(SRC)
 	go install -v cmd/$@/$@.go
 
 test: $(SRC)
@@ -14,4 +14,4 @@ vendor: $(SRC)
 	go get -d -v ./...
 	godep save ./...
 
-.PHONY: all scrumway test vendor
+.PHONY: all scrumkin test vendor

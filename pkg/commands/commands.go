@@ -1,6 +1,6 @@
 package commands
 
-import "scrumway/pkg/messages"
+import "scrumkin/pkg/messages"
 
 type Command interface {
 	Match(*messages.Message) bool

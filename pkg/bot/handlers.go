@@ -2,8 +2,8 @@ package bot
 
 import (
 	"log"
-	"scrumway/pkg/commands/ping"
-	"scrumway/pkg/messages"
+	"scrumkin/pkg/commands/ping"
+	"scrumkin/pkg/messages"
 )
 
 func (b *Bot) registerCommands() {

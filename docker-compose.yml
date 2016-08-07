@@ -1,4 +1,4 @@
-scrumway:
+scrumkin:
   build: .
   volumes:
-    - ".:/go/src/scrumway"
+    - ".:/go/src/scrumkin"
