@@ -7,7 +7,7 @@ scrumkin: $(SRC)
 	go install -v cmd/$@/$@.go
 
 test: $(SRC)
-	go test $(SRC_PATHS)
+	go test $(addsuffix '/...', $(SRC_PATHS))
 
 vendor: $(SRC)
 	go get -v github.com/tools/godep

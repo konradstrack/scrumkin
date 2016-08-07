@@ -4,5 +4,5 @@ import "scrumkin/pkg/messages"
 
 type Command interface {
 	Match(*messages.Message) bool
-	Process(*messages.Message) messages.Response
+	Process(*messages.Message) *messages.Response
 }

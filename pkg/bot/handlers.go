@@ -27,7 +27,7 @@ func (b *Bot) processMessage(msg *messages.Message) {
 	for _, cmd := range b.commands {
 		if cmd.Match(msg) {
 			response := cmd.Process(msg)
-			b.sendResponse(&response, msg)
+			b.sendResponse(response, msg)
 		}
 	}
 }
