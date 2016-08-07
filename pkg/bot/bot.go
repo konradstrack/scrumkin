@@ -3,17 +3,21 @@ package bot
 import (
 	"log"
 	"os"
+	"scrumway/pkg/commands"
+	"scrumway/pkg/messages"
 
 	"github.com/nlopes/slack"
 )
 
 type Bot struct {
 	Token    string
-	Messages chan Message
+	messages chan messages.Message
+	commands []commands.Command
 }
 
 func (b *Bot) Run() {
 	setUpLogger()
+	b.registerCommands()
 
 	go b.listen()
 	b.handleMessages()
@@ -22,14 +26,15 @@ func (b *Bot) Run() {
 func New(token string) *Bot {
 	bot := &Bot{
 		Token:    token,
-		Messages: make(chan Message),
+		messages: make(chan messages.Message),
+		commands: make([]commands.Command, 0),
 	}
 
 	return bot
 }
 
-func (b *Bot) Enqueue(m Message) {
-	b.Messages <- m
+func (b *Bot) Enqueue(m messages.Message) {
+	b.messages <- m
 }
 
 func (b *Bot) listen() *slack.RTM {
@@ -49,7 +54,7 @@ func (b *Bot) listen() *slack.RTM {
 		case *slack.ConnectedEvent:
 			printConnectionInfo(event)
 		case *slack.MessageEvent:
-			m := Message{
+			m := messages.Message{
 				Text:    event.Text,
 				User:    event.User,
 				Channel: event.Channel,
