@@ -1,7 +1,6 @@
 package bot
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -48,7 +47,7 @@ func (b *Bot) listen() *slack.RTM {
 		msg := <-rtm.IncomingEvents
 		switch event := msg.Data.(type) {
 		case *slack.ConnectedEvent:
-			fmt.Println("Connected:")
+			printConnectionInfo(event)
 		case *slack.MessageEvent:
 			m := Message{event.Msg.Text}
 			b.Enqueue(m)
@@ -61,4 +60,10 @@ func setUpLogger() {
 	// see: https://github.com/nlopes/slack/commit/faac376828565b0d1dce05142add386de5fb7363
 	logger := log.New(os.Stdout, "scrumway: ", log.Lshortfile|log.LstdFlags)
 	slack.SetLogger(logger)
+}
+
+func printConnectionInfo(event *slack.ConnectedEvent) {
+	name := event.Info.Team.Name
+	domain := event.Info.Team.Domain
+	log.Printf("Connected to team %s (%s)", name, domain)
 }
