@@ -49,7 +49,11 @@ func (b *Bot) listen() *slack.RTM {
 		case *slack.ConnectedEvent:
 			printConnectionInfo(event)
 		case *slack.MessageEvent:
-			m := Message{event.Msg.Text}
+			m := Message{
+				Text:    event.Text,
+				User:    event.User,
+				Channel: event.Channel,
+			}
 			b.Enqueue(m)
 		}
 	}

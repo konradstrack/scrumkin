@@ -3,7 +3,9 @@ package bot
 import "log"
 
 type Message struct {
-	message string
+	Text    string
+	User    string
+	Channel string
 }
 
 func (b *Bot) handleMessages() {
