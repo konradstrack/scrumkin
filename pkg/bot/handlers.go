@@ -33,9 +33,6 @@ func (b *Bot) processMessage(msg *messages.Message) {
 }
 
 func (b *Bot) sendResponse(r *messages.Response, oldMsg *messages.Message) {
-	log.Print(r)
-	log.Print(oldMsg)
-	log.Print(b.rtm)
 	msg := b.rtm.NewOutgoingMessage(r.Text, oldMsg.Channel)
 	b.rtm.SendMessage(msg)
 }
