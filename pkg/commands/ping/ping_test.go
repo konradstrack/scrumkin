@@ -6,13 +6,6 @@ import (
 	"testing"
 )
 
-func TestNew(t *testing.T) {
-	ping, _ := New()
-	if ping.Name != "ping" {
-		t.Error("Expected name to be 'ping', got", ping.Name)
-	}
-}
-
 var matchTests = []struct {
 	text     string
 	expected bool
@@ -49,5 +42,23 @@ func TestProcess(t *testing.T) {
 	actual := ping.Process(msg)
 	if !reflect.DeepEqual(expected, actual) {
 		t.Error("Expected", expected, "got", actual)
+	}
+}
+
+func TestName(t *testing.T) {
+	ping, _ := New()
+
+	expected := "ping"
+	actual := ping.Name()
+	if actual != expected {
+		t.Error("Expected", expected, "got", actual)
+	}
+}
+
+func TestHelpSummary(t *testing.T) {
+	ping, _ := New()
+
+	if ping.HelpSummary() == "" {
+		t.Error("Expected non-empty help summary")
 	}
 }

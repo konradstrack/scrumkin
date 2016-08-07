@@ -2,17 +2,28 @@ package bot
 
 import (
 	"log"
+	"scrumkin/pkg/commands/help"
 	"scrumkin/pkg/commands/ping"
 	"scrumkin/pkg/messages"
 )
 
 func (b *Bot) registerCommands() {
+	// register ping
 	pingCmd, err := ping.New()
 	if err != nil {
-		log.Fatalf("fatal error: %s", err)
+		log.Fatalf("fatal error while registering '%s': %s", pingCmd.Name(), err)
 	}
 
 	b.commands = append(b.commands, pingCmd)
+
+	// register help
+	helpCmd, err := help.New()
+	if err != nil {
+		log.Fatalf("fatal error while registering 'help' command: %s", err)
+	}
+
+	b.commands = append(b.commands, helpCmd)
+	helpCmd.SetCommands(b.commands)
 }
 
 func (b *Bot) handleMessages() {

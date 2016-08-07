@@ -8,8 +8,9 @@ import (
 )
 
 type Ping struct {
-	Name        string
-	MatchRegexp *regexp.Regexp
+	name        string
+	matchRegexp *regexp.Regexp
+	helpSummary string
 }
 
 func New() (*Ping, error) {
@@ -20,13 +21,22 @@ func New() (*Ping, error) {
 		return nil, fmt.Errorf("Cannot create command: %s", name)
 	}
 
-	return &Ping{name, r}, nil
+	summary := "Returns 'pong'"
+	return &Ping{name, r, summary}, nil
 }
 
-func (cmd *Ping) Match(msg *messages.Message) bool {
-	return cmd.MatchRegexp.MatchString(msg.Text)
+func (p *Ping) Match(msg *messages.Message) bool {
+	return p.matchRegexp.MatchString(msg.Text)
 }
 
-func (cmd *Ping) Process(msg *messages.Message) *messages.Response {
+func (p *Ping) Process(msg *messages.Message) *messages.Response {
 	return &messages.Response{"pong"}
+}
+
+func (p *Ping) Name() string {
+	return p.name
+}
+
+func (p *Ping) HelpSummary() string {
+	return p.helpSummary
 }
