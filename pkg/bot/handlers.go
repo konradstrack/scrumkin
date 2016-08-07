@@ -26,7 +26,16 @@ func (b *Bot) handleMessages() {
 func (b *Bot) processMessage(msg *messages.Message) {
 	for _, cmd := range b.commands {
 		if cmd.Match(msg) {
-			log.Print(cmd.Process(msg))
+			response := cmd.Process(msg)
+			b.sendResponse(&response, msg)
 		}
 	}
+}
+
+func (b *Bot) sendResponse(r *messages.Response, oldMsg *messages.Message) {
+	log.Print(r)
+	log.Print(oldMsg)
+	log.Print(b.rtm)
+	msg := b.rtm.NewOutgoingMessage(r.Text, oldMsg.Channel)
+	b.rtm.SendMessage(msg)
 }

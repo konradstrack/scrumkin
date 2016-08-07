@@ -13,6 +13,7 @@ type Bot struct {
 	Token    string
 	messages chan messages.Message
 	commands []commands.Command
+	rtm      *slack.RTM
 }
 
 func (b *Bot) Run() {
@@ -24,10 +25,20 @@ func (b *Bot) Run() {
 }
 
 func New(token string) *Bot {
+	api := slack.New(token)
+
+	// Enable Slack api debugging if env variable set
+	if os.Getenv("DEBUG") != "" {
+		api.SetDebug(true)
+	}
+
+	rtm := api.NewRTM()
+
 	bot := &Bot{
 		Token:    token,
 		messages: make(chan messages.Message),
 		commands: make([]commands.Command, 0),
+		rtm:      rtm,
 	}
 
 	return bot
@@ -38,18 +49,10 @@ func (b *Bot) Enqueue(m messages.Message) {
 }
 
 func (b *Bot) listen() *slack.RTM {
-	api := slack.New(b.Token)
-
-	// Enable Slack api debugging if env variable set
-	if os.Getenv("DEBUG") != "" {
-		api.SetDebug(true)
-	}
-
-	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go b.rtm.ManageConnection()
 
 	for {
-		msg := <-rtm.IncomingEvents
+		msg := <-b.rtm.IncomingEvents
 		switch event := msg.Data.(type) {
 		case *slack.ConnectedEvent:
 			printConnectionInfo(event)
