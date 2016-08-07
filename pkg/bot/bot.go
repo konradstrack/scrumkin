@@ -9,32 +9,37 @@ import (
 )
 
 type Bot struct {
-	messages chan *Message
+	Token    string
+	Messages chan Message
 }
 
-type Message struct {
-	message string
-}
-
-func Run() {
+func (b *Bot) Run() {
 	setUpLogger()
 
-	bot := new(Bot)
-	bot.Connect()
+	go b.listen()
+	b.handleMessages()
 }
 
-func (b *Bot) Enqueue(m *Message) {
-	b.messages <- m
-}
-
-func (b *Bot) Connect() *slack.RTM {
-	token := os.Getenv("SLACK_TOKEN")
-	if token == "" {
-		log.Fatal("error: Token not provided. Please set the SLACK_TOKEN environment variable.")
+func New(token string) *Bot {
+	bot := &Bot{
+		Token:    token,
+		Messages: make(chan Message),
 	}
 
-	api := slack.New(token)
-	api.SetDebug(true)
+	return bot
+}
+
+func (b *Bot) Enqueue(m Message) {
+	b.Messages <- m
+}
+
+func (b *Bot) listen() *slack.RTM {
+	api := slack.New(b.Token)
+
+	// Enable Slack api debugging if env variable set
+	if os.Getenv("DEBUG") != "" {
+		api.SetDebug(true)
+	}
 
 	rtm := api.NewRTM()
 	go rtm.ManageConnection()
@@ -46,7 +51,7 @@ func (b *Bot) Connect() *slack.RTM {
 			fmt.Println("Connected:")
 		case *slack.MessageEvent:
 			m := Message{event.Msg.Text}
-			b.Enqueue(&m)
+			b.Enqueue(m)
 		}
 	}
 }
