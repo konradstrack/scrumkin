@@ -4,7 +4,10 @@ SRC := $(shell find $(SRC_PATHS) -name '*.go')
 all: scrumkin
 
 scrumkin: $(SRC)
-	go install -v cmd/$@/$@.go
+	go build -v cmd/$@/$@.go
+
+install:
+	go install -v cmd/scrumkin/scrumkin.go
 
 test: $(SRC)
 	go test $(addsuffix '/...', $(SRC_PATHS))

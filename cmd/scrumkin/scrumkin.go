@@ -12,9 +12,14 @@ func main() {
 
 	token := os.Getenv("SLACK_TOKEN")
 	if token == "" {
-		log.Fatal("error: Token not provided. Please set the SLACK_TOKEN environment variable.")
+		log.Fatal("fatal error: Token not provided. Please set the SLACK_TOKEN environment variable.")
 	}
 
-	b := bot.New(token)
+	dsn := os.Getenv("DATABASE_DSN")
+	if dsn == "" {
+		log.Fatal("fatal error: Data source name not provided. Please set the DATABASE_DSN environment variable.")
+	}
+
+	b := bot.New(token, dsn)
 	b.Run()
 }
