@@ -1,14 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"scrumkin/pkg/bot"
 )
 
 func main() {
-	fmt.Println("Starting scrumkin")
+	log.Printf("Starting scrumkin")
 
 	token := os.Getenv("SLACK_TOKEN")
 	if token == "" {

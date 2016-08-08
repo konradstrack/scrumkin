@@ -2,27 +2,36 @@ package bot
 
 import (
 	"log"
+	"scrumkin/pkg/commands"
 	"scrumkin/pkg/commands/help"
 	"scrumkin/pkg/commands/ping"
+	"scrumkin/pkg/commands/scrum"
 	"scrumkin/pkg/messages"
 )
 
 func (b *Bot) registerCommands() {
-	// register ping
-	pingCmd, err := ping.New()
-	if err != nil {
-		log.Fatalf("fatal error while registering '%s': %s", pingCmd.Name(), err)
+	pingCmd, pingErr := ping.New()
+	scrumCmd, scrumErr := scrum.New()
+	helpCmd, helpErr := help.New()
+
+	cmds := []struct {
+		cmd commands.Command
+		err error
+	}{
+		{pingCmd, pingErr},
+		{scrumCmd, scrumErr},
+		{helpCmd, helpErr},
 	}
 
-	b.commands = append(b.commands, pingCmd)
-
-	// register help
-	helpCmd, err := help.New()
-	if err != nil {
-		log.Fatalf("fatal error while registering 'help' command: %s", err)
+	for _, c := range cmds {
+		log.Printf("Registering command: %s", c.cmd.Name())
+		if c.err != nil {
+			log.Fatalf("fatal error: registering '%s': %s", c.cmd.Name(), c.err)
+		}
+		b.commands = append(b.commands, c.cmd)
 	}
 
-	b.commands = append(b.commands, helpCmd)
+	// set commands for help
 	helpCmd.SetCommands(b.commands)
 }
 
