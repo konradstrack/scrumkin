@@ -5,37 +5,40 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
 )
 
-type Config struct {
+// Client describes a interface of an NLP parser
+type Client interface {
+	Parse(string) (*Text, error)
+}
+
+// CoreNLPClient represents a client for the CoreNLP server
+type CoreNLPClient struct {
+	config   *CoreNLPConfig
+	queryURL string
+}
+
+// CoreNLPConfig holds configuration for CoreNLPClient
+type CoreNLPConfig struct {
 	BaseURL    string
 	Annotators []string
 }
 
-type Client interface {
-	Query(string) (*Text, error)
-}
-
-type CoreNLPClient struct {
-	config   *Config
-	queryURL string
-}
-
-func NewCoreNLPClient(config *Config) Client {
+// NewCoreNLPClient builds and returns a new CoreNLP client
+func NewCoreNLPClient(config *CoreNLPConfig) Client {
 	url := buildURL(config)
 
-	log.Print(url)
 	return &CoreNLPClient{
 		config:   config,
 		queryURL: url,
 	}
 }
 
-func (c *CoreNLPClient) Query(text string) (*Text, error) {
+// Parse queries CoreNLP server and returns text parsing results
+func (c *CoreNLPClient) Parse(text string) (*Text, error) {
 	response, err := http.Post(c.queryURL, "text/plain", strings.NewReader(text))
 	if err != nil {
 		return nil, err
@@ -55,7 +58,7 @@ type properties struct {
 	Annotators string `json:"annotators"`
 }
 
-func buildURL(config *Config) string {
+func buildURL(config *CoreNLPConfig) string {
 	p := properties{
 		Annotators: strings.Join(config.Annotators, ","),
 	}
