@@ -5,6 +5,7 @@ import (
 	"log"
 	"regexp"
 	"scrumkin/pkg/messages"
+	"scrumkin/pkg/nlp"
 )
 
 // Scrum represents the scrum command
@@ -17,7 +18,7 @@ type Scrum struct {
 // New returns a new scrum command
 func New() (*Scrum, error) {
 	name := "scrum"
-	r, err := regexp.Compile(`(?i)^\s*(scrum|today|yesterday)\s*$`)
+	r, err := regexp.Compile(`(?i)^\s*(scrum|today|yesterday)\s+.*$`)
 	if err != nil {
 		log.Printf("error: %s", err)
 		return nil, fmt.Errorf("Cannot create command: %s", name)
@@ -34,6 +35,12 @@ func (p *Scrum) Match(msg *messages.Message) bool {
 
 // Process handles the command and creates a response
 func (p *Scrum) Process(msg *messages.Message) *messages.Response {
+	config := &nlp.Config{
+		BaseURL:    "http://corenlp:9000",
+		Annotators: []string{"tokenize", "ssplit", "pos", "depparse", "lemma", "ner"},
+	}
+	client := nlp.NewCoreNLPClient(config)
+	log.Print(client.Query(msg.Text))
 	return &messages.Response{"Not implemented yet"}
 }
 

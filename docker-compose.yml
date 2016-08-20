@@ -7,11 +7,16 @@ services:
       - ".:/go/src/scrumkin"
     environment:
       DATABASE_DSN: root:scrumkinpass@tcp(mysqldb:3306)/scrumkin
-    links:
-      - mysqldb
 
   mysqldb:
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: scrumkinpass
       MYSQL_DATABASE: scrumkin
+
+  corenlp:
+    image: konradstrack/corenlp
+    expose:
+      - "9000"
+    ports:
+      - "9000:9000"
