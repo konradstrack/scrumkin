@@ -27,7 +27,10 @@ func New() (*Scrum, error) {
 		BaseURL:    "http://corenlp:9000",
 		Annotators: []string{"tokenize", "ssplit", "pos", "depparse", "lemma", "ner"},
 	}
-	client := nlp.NewCoreNLPClient(config)
+	client, err := nlp.NewCoreNLPClient(config)
+	if err != nil {
+		return nil, err
+	}
 
 	summary := "Lets you scrum"
 	return &Scrum{name, r, summary, client}, nil

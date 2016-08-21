@@ -1,7 +1,6 @@
 package nlp
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -28,13 +27,18 @@ type CoreNLPConfig struct {
 }
 
 // NewCoreNLPClient builds and returns a new CoreNLP client
-func NewCoreNLPClient(config *CoreNLPConfig) Client {
-	url := buildURL(config)
+func NewCoreNLPClient(config *CoreNLPConfig) (Client, error) {
+	url, err := buildURL(config)
+	if err != nil {
+		return nil, err
+	}
 
-	return &CoreNLPClient{
+	client := &CoreNLPClient{
 		config:   config,
 		queryURL: url,
 	}
+
+	return client, nil
 }
 
 // Parse queries CoreNLP server and returns text parsing results
@@ -58,15 +62,17 @@ type properties struct {
 	Annotators string `json:"annotators"`
 }
 
-func buildURL(config *CoreNLPConfig) string {
+func buildURL(config *CoreNLPConfig) (string, error) {
 	p := properties{
 		Annotators: strings.Join(config.Annotators, ","),
 	}
-	b := new(bytes.Buffer)
-	json.NewEncoder(b).Encode(p)
+	encoded, err := json.Marshal(p)
+	if err != nil {
+		return "", err
+	}
 
 	v := url.Values{}
-	v.Set("properties", b.String())
+	v.Set("properties", string(encoded[:]))
 
-	return fmt.Sprintf("%s/?%s", config.BaseURL, v.Encode())
+	return fmt.Sprintf("%s/?%s", config.BaseURL, v.Encode()), nil
 }
